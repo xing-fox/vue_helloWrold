@@ -1,15 +1,15 @@
 <template>
-  <div class="hello">
+  <div id="index">
     <h3>{{ msg }}</h3> 
   </div>
 </template>
 
 <script>
 export default {
-  name: 'hello',
+  name: 'index',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Hello Wrold~'
     }
   }
 }
@@ -18,6 +18,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
+  text-align: center;
   font-weight: normal;
 } 
 </style>
