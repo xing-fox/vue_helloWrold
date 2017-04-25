@@ -4,13 +4,17 @@
   </div>
 </template>
 
-<script>
+<script>  
+import $ from 'jquery'
 export default {
   name: 'index',
   data () {
     return {
       msg: 'Hello Wrold~'
     }
+  },
+  created () { 
+    this.$Loading.finish(); //数据请求完毕，进度加载完成
   }
 }
 </script>
