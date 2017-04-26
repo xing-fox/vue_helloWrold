@@ -1,7 +1,9 @@
 'user strict';
+
 const state = {
-  show: true
+  shopCartNum: []  
 }
+
 const actions = {
   laodAsyncf({ commit }) {
     commit('loadChangef')
@@ -10,12 +12,17 @@ const actions = {
     commit('loadChanget')
   }
 }
+
 const mutations = {
-  loadChangef: state => state.show = false,
-  loadChanget: state => state.show = true
+  Decrease: state => state.show = false,
+  Increase: state => {
+    
+  }
 }
+
 const getters = {
 }
+
 export default {
   state,
   getters,

@@ -6,12 +6,23 @@
 
 <script>  
 import $ from 'jquery'
+import { mapActions  } from 'vuex'
+
 export default {
   name: 'index',
   data () {
     return {
       msg: 'Hello Wrold~'
     }
+  },
+  mounted () {
+        
+  },
+  computed: {
+    
+  },
+  methods: {
+     
   },
   created () { 
     this.$Loading.finish(); //数据请求完毕，进度加载完成
