@@ -1,19 +1,27 @@
 <template>
   <div id="index">
+  <C-title :data-prop="titleData"></C-title>
     <h3>{{ msg }}</h3> 
   </div>
 </template>
 
 <script>  
 import $ from 'jquery'
-import { mapActions  } from 'vuex'
+import cTitle from '@/components/commonTitle'
+// import { mapActions  } from 'vuex'
 
 export default {
   name: 'index',
   data () {
     return {
-      msg: 'Hello Wrold~'
+      msg: 'Hello Wrold~',
+      titleData: {
+        title: '首页'
+      }
     }
+  },
+  components: {
+    'C-title': cTitle
   },
   mounted () {
         

@@ -7,16 +7,17 @@
 <script>
 import 'iview/dist/styles/iview.css'
 export default {
-  name: 'app'
+  name: 'Report'
 }
 </script>
 
 <style> 
 @import url('./origin_static/css/style.css');
+body,html{
+  background:#f1f1f1;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center; 
+  background:#eee;
 }
 </style>
