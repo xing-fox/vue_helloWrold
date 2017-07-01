@@ -16,8 +16,29 @@ export default {
 body,html{
   background:#f1f1f1;
 }
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  background:#eee;
+bor-t:before{
+  content: '';
+  width:100%;
+  height:0;
+  border-top:1px solid #ccc;
+  position:absolute;
+  top:0;left:0;
+  border-top:1px solid #ccc;
+  -webkit-transform:scale(0.5);
+  -webkit-transform-origin:0 0;
+  transform:scaleY(0.5);
+  transform-origin:0 0;
+}
+bor-b:after{
+  content: '';
+  width:100%;
+  height:0;
+  border-bottom:1px solid #ccc;
+  position:absolute;
+  bottom:0;left:0;
+  -webkit-transform:scale(0.5);
+  -webkit-transform-origin:0 0;
+  transform:scaleY(0.5);
+  transform-origin:0 0;
 }
 </style>

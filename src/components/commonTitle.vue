@@ -2,7 +2,7 @@
   #cTitle{
     height:44px;
     line-height:44px;
-    background:#fff;
+    background:#F2F2F2;
     text-align:center;
     font-size:18px;
     color:#1a1a1a;
@@ -37,14 +37,10 @@ export default {
       type: Object
     }
   },
-  computed: {
-  },
   methods: {
     backReturn () {
       window.location.go(-1)
     }
-  },
-  created () {
   }
 }
 </script>

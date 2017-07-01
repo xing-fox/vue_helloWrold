@@ -1,31 +1,47 @@
+<style lang="less" scoped>
+.titleShow{
+  height:40px;
+  background:#fff;
+  position:relative;
+  .timeshoise{
+    height:20px;
+    line-height:20px;
+    font-size:14px;
+    color:#333;
+    position:absolute;
+    top:10px;left:20px;
+  }
+}
+</style>
+
 <template>
-  <div id="index">
-    <h3>{{ msg }}</h3> 
+  <div id="app">
+    <C-title :data-prop="titleData"></C-title>
+    <div class="titleShow">
+      <div class="timeshoise">{{ timeChoise }}<i></i></div>
+    </div>
   </div>
 </template>
 
 <script>
+import cTitle from '@/components/commonTitle'
 export default {
   name: 'content',
   data () {
     return {
-      msg: 'Hello Wrold~'
+      titleData: {
+        title: '日报分析'
+      },
+      timeChoise: '今日'
     }
   },
-  mounted () {
+  created () {
+    this.$Loading.finish();
   },
-  computed: {
+  components: {
+    'C-title': cTitle
   },
   methods: {
-  },
-  created () {
-    this.$Loading.finish(); //数据请求完毕，进度加载完成
   }
 }
 </script>
-
-<style scoped>
-  h3{
-    text-align:center
-  }
-</style>
