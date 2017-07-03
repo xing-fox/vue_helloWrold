@@ -16,20 +16,19 @@ export default {
 body,html{
   background:#f1f1f1;
 }
-bor-t:before{
+.bor-T:before{
   content: '';
   width:100%;
   height:0;
   border-top:1px solid #ccc;
   position:absolute;
   top:0;left:0;
-  border-top:1px solid #ccc;
   -webkit-transform:scale(0.5);
   -webkit-transform-origin:0 0;
   transform:scaleY(0.5);
   transform-origin:0 0;
 }
-bor-b:after{
+.bor-B:after{
   content: '';
   width:100%;
   height:0;
