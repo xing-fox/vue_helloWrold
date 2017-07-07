@@ -20,17 +20,17 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/blog/report/blogMainSubmit.action': { //日报分析首页接口
-        target: 'http://172.31.2.170:8080',
+        target: 'http://172.31.0.147:8080',
         changeOrigin: true,
         pathRewrite: {}
       },
       '/blog/report/blogMainUsersList.action': { //日报分析自己和直属下级接口
-        target: 'http://172.31.2.170:8080',
+        target: 'http://172.31.0.147:8080',
         changeOrigin: true,
         pathRewrite: {}
       },
       '/blog/report/subDepartments.action': { //日报分析下级接口
-        target: 'http://172.31.2.170:8080',
+        target: 'http://172.31.0.147:8080',
         changeOrigin: true,
         pathRewrite: {}
       }

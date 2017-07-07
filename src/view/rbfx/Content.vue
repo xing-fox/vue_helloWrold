@@ -165,93 +165,8 @@
     ul{
       margin:0 10px 0  20px;
       position:relative;
-      li{
-        height:50px;
-        line-height:50px;
-        font-size:16px;
-        color:#333;
-        font-size:0;
-        position:relative;
-        i{
-          width:0;   
-          height:0;
-          position:absolute;
-          top:20px;left:0;   
-          border-top:5px solid transparent;   
-          border-bottom:5px solid transparent;   
-          border-left:6px solid #999;
-        }
-        .list1{
-          height:50px;
-          line-height:50px;
-          font-size:16px;
-          color:#333;
-          padding-left:20px;
-          .i_show{
-            display:none
-          }
-        }
-        .list1_title{
-          padding-left: 0 !important;
-        }
-        .list2{
-          width:34px;
-          height:34px;
-          line-height:34px;
-          text-align:center;
-          font-size:12px;
-          position:absolute;
-          top:8px;right:120px;
-          border:1px solid #ddd;
-          border-radius:17px;
-        }
-        .list3{
-          position:absolute;
-          top:0;right:18px;
-          color:#F67063;
-          font-size:16px;
-          img{
-            width:16px;
-            height:16px;
-            position:absolute;
-            top:17px;right:-18px;
-            &.img_show{
-              display:none;
-            }
-          }
-        }
-        .list4{
-          width:34px;
-          height:34px;
-          line-height:34px;
-          text-align:center;
-          font-size:14px;
-          color:#fff;
-          position:absolute;
-          top:8px;left:0;
-          border-radius:17px;
-          background:#ddd;
-        }
-        .list5{
-          margin-left:50px;
-          span{
-            font-size:16px;
-          }
-        }
-        .list6{
-          width:30px;
-          height:30px;
-          position:absolute;
-          top:10px;right:0;
-          color:#F5564C;
-          img{
-            width:100%;
-            height:100%;
-          }
-        }
-      }
     }
-  }
+  }  
 }
 </style>
 
@@ -284,46 +199,23 @@
           </li>
         </ul>
       </div>
+    </div>
+    <div class="mainContent bor-T">
       <div class="content2">
         <p class="bor-T"><i></i><span>下级部门</span></p>
-        <ul class="bor-T"><!--有下级部门的情况-->
-          <li>
-            <div class="list1" :class="{list1_title: false}">
-              <i :class="{i_show: false}"></i>
-              <span>华中区华中区</span>
-            </div>
-            <div class="list2">
-              <span>0%</span>
-            </div>
-            <div class="list3">
-              <span>213人未交</span>
-              <img :class="{img_show: true}" src="../../assets/arrow_right.png" alt="">
-            </div>
-          </li>
+        <ul>
+          <rbc-List :data-prop="supData"></rbc-List>
         </ul>
-        <ul class="bor-T"><!--没有下级部门的情况-->
-          <li>
-            <div class="list4">
-              <span>方</span>
-              <!--<img src="">-->
-            </div>
-            <div class="list5">
-              <span>陈军伟</span>
-            </div>
-            <div class="list6">
-              <span v-if='1==2'>未交</span>
-              <img v-else src="../../assets/gou.png">
-            </div>
-          </li>
-        </ul>
-      </div>
+      </div>  
     </div>
   </div>
 </template>
  
 <script>
 import cTitle from '@/components/commonTitle'
+import rbCList from '@/components/rbChildList'
 import tList from '@/components/timeList'
+
 export default {
   name: 'content',
   data () {
@@ -336,8 +228,14 @@ export default {
       timeList: [], //总的时间类别
       showtimeList: false, //判断显示隐藏时间list
       myselfData: [], //自己和直属下级
-      totalData:Object, //头部信息
+      supData: Object, //下级部门
+      totalData: Object, //头部信息
       timeType: 0 //默认今日
+    }
+  },
+  filters: {
+    filter1 (value) {
+      return value.charAt(0).toLocaleUpperCase()
     }
   },
   created () {
@@ -372,37 +270,26 @@ export default {
   },
   components: {
     'C-title': cTitle,
-    'T-list': tList
-  },
-  filters: {
-    filter1 (value) {
-      return value.charAt(0).toLocaleUpperCase()
-    }
+    'T-list': tList,
+    'rbc-List': rbCList
   },
   methods: {
     init () {
-      this.$http.post('/blog/report/blogMainUsersList.action', 
-        {'time_type': this.timeType},{emulateJSON: true}
-        ).then((response) => {
-            this.myselfData = response.body.data
-            this.totalData = {
-              noSubmitNum: response.body.noSubmitNum,
-              submitNum: response.body.submitNum
-            }
-        }, (response) => {
-      })
-    },
-    subDepart () {
       this.$http.post('/blog/report/subDepartments.action', 
         {'time_type': this.timeType},{emulateJSON: true}
         ).then((response) => {
-            this.$Loading.finish()
-            this.myselfData = response.body.data
-            this.totalData = {
-              noSubmitNum: response.body.noSubmitNum,
-              submitNum: response.body.submitNum
-            }
-            this.$Loading.finish()
+          this.supData = response.body.data
+        }, (response) => {
+      })
+      this.$http.post('/blog/report/blogMainUsersList.action', 
+        {'time_type': this.timeType},{emulateJSON: true}
+        ).then((response) => {
+          this.myselfData = response.body.data
+          this.totalData = {
+            noSubmitNum: response.body.noSubmitNum,
+            submitNum: response.body.submitNum
+          }
+          this.$Loading.finish()
         }, (response) => {
       })
     },
