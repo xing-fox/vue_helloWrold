@@ -1,4 +1,7 @@
 <style lang="less" scoped>
+  #app{
+    background: #f1f1f1;
+  }
   .content1{
     background:#fff;
     height:45px;
@@ -81,6 +84,89 @@
       position:absolute;
       top:10px;right:5px;
     }
+    .money{
+      height:40px;
+      line-height:40px;
+      position:relative;
+      display:flex;
+      .mTime{
+        flex:1;
+        font-size:14px;
+        color:#3687e3;
+        text-align:center;
+      }
+      .mIn{
+        flex:2;
+        color:#666;
+        font-size:14px;
+        font-weight:bold;
+        text-align:center;
+      }
+      .mOut{
+        flex:2;
+        color:#666;
+        font-size:14px;
+        font-weight:bold;
+        text-align:center;
+      }
+    }
+    .mBut{
+      width:130px;
+      margin:5px 20px;
+      display:flex;
+      .active{
+        color:#3687e3 !important;
+        border:1px solid #3687e3 !important;
+      }
+      .bIn,.bOut{
+        flex:1;
+        margin:0 10px 0 0;
+        height:30px;
+        line-height:30px;
+        border-radius:2px;
+        color:#666;
+        text-align:center;
+        border:1px solid #999;
+      }
+    }
+    .listTitle{
+      color:#999;
+      display:flex;
+      font-size:13px;
+        .rank,.money,.ratio{
+          display:inline-block;
+          height:40px;
+          line-height:40px;
+          flex:1;
+          text-align:center;
+        }
+        .types{
+          height:40px;
+          line-height:40px;
+          flex:3;
+          text-align:left;
+        }
+    }
+    .listData li{
+      color:#666;
+      font-size:13px;
+      display:flex;
+      position:relative;
+        .rank,.money,.ratio{
+          display:inline-block;
+          height:40px;
+          line-height:40px;
+          flex:1;
+          text-align:center;
+        }
+        .types{
+          display:inline-block;
+          height:40px;
+          line-height:40px;
+          flex:3;
+          text-align:left;
+        }
+    }
   }
 </style>
 
@@ -108,6 +194,53 @@
       <div class="switch">
         <T-switch :data-prop="switchData" @changeData='reloadData'></T-switch>
       </div>
+      <div class="money bor-T">
+        <div class="mTime">本月</div>
+        <div class="mIn">收入: <span>3000</span></div>
+        <div class="mOut">支出: <span>1600</span></div>
+      </div>
+      <div class="mBut">
+        <div class="bIn active">收入</div>
+        <div class="bOut">支出</div>
+      </div>
+      <div class="listTitle">
+        <span class="rank">排名</span>
+        <span class="types">收入类型</span>
+        <span class="money">金额</span>
+        <span class="ratio">环比</span>
+      </div>
+      <ul class="listData">
+        <li class="bor-T"> 
+          <span class="rank"> 1 </span>
+          <span class="types"> 返款 </span>
+          <span class="money"> 25 </span>
+          <span class="ratio"> 10% </span>
+        </li>
+        <li class="bor-T"> 
+          <span class="rank"> 2 </span>
+          <span class="types"> 返利 </span>
+          <span class="money"> 25 </span>
+          <span class="ratio"> 10% </span>
+        </li>
+        <li class="bor-T"> 
+          <span class="rank"> 3 </span>
+          <span class="types"> 房租 </span>
+          <span class="money"> 25 </span>
+          <span class="ratio"> 10% </span>
+        </li>
+        <li class="bor-T"> 
+          <span class="rank"> 4 </span>
+          <span class="types"> 转入 </span>
+          <span class="money"> 25 </span>
+          <span class="ratio"> 10% </span>
+        </li>
+        <li class="bor-T"> 
+          <span class="rank"> 5 </span>
+          <span class="types"> 其他 </span>
+          <span class="money"> 25 </span>
+          <span class="ratio"> 10% </span>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -129,11 +262,11 @@ export default {
     this.switchData = {
       content: [
         {
-          keyword: '今',
+          keyword: '元',
           state: true
         },
         {
-          keyword: '昨',
+          keyword: '万元',
           state: false
         }
       ],
@@ -166,7 +299,7 @@ export default {
         credits : { enabled : false },
         legend : { enabled : false },
         title: {
-          text: '1325',
+          text: '<span>256</span><br><span>总金额</span>',
           align: 'center',
           verticalAlign: 'middle',
           y: 0,
