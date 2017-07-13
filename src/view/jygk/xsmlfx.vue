@@ -12,6 +12,26 @@
         text-align:left;
         padding-left:15px;
         position:relative;
+        span{
+            display:inline-block;
+            vertical-align:middle;
+          &.triangle{
+            width: 0;
+            height: 0;
+            margin-left:2px;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 6px solid #777;
+          }
+          &.triangle1{
+            width: 0;
+            height: 0;
+            margin-left:2px;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 6px solid #777;
+          }
+        }
         .goodSwitch{
           background:#eee;
           position:absolute;
@@ -23,6 +43,29 @@
         width:100px;
         text-align:center;
         position:relative;
+        span{
+            display:inline-block;
+            max-width:80px;
+            height:40px;
+            overflow:hidden;
+            vertical-align:middle;
+          &.triangle{
+            width: 0;
+            height: 0;
+            margin-left:2px;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 6px solid #777;
+          }
+          &.triangle1{
+            width: 0;
+            height: 0;
+            margin-left:2px;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 6px solid #777;
+          }
+        }
         .timeSwitch{
           background:#eee;
           position:absolute;
@@ -34,6 +77,26 @@
         width:100px;
         text-align:center;
         position:relative;
+        span{
+            display:inline-block;
+            vertical-align:middle;
+          &.triangle{
+            width: 0;
+            height: 0;
+            margin-left:2px;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 6px solid #777;
+          }
+          &.triangle1{
+            width: 0;
+            height: 0;
+            margin-left:2px;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 6px solid #777;
+          }
+        }
         .unitSwitch{
           background:#eee;
           position:absolute;
@@ -74,6 +137,34 @@
         position:relative;
         .icon{
           width:50px;
+          position:relative;
+          .img1{
+            display:inline-block;
+            width:50px;
+            height:50px;
+            background-image:url('../../assets/jp.png');
+            background-repeat:no-repeat;
+            background-size:50% 65%;
+            background-position:center center;
+          }
+          .img2{
+            display:inline-block;
+            width:50px;
+            height:50px;
+            background-image:url('../../assets/yp.png');
+            background-repeat:no-repeat;
+            background-size:50% 65%;
+            background-position:center center;
+          }
+          .img3{
+            display:inline-block;
+            width:50px;
+            height:50px;
+            background-image:url('../../assets/tp.png');
+            background-repeat:no-repeat;
+            background-size:50% 65%;
+            background-position:center center;
+          }
           span{
             display:inline-block;
             width:24px;
@@ -158,19 +249,19 @@
     <C-title :data-prop="titleData"></C-title>
     <div class="tab bor-T">
       <div class="tgoods">
-        <span @click="goodsFunc">{{ goodsChoise }}</span>
+        <span @click="goodsFunc">{{ goodsChoise }}</span><span :class="{triangle: !showgoodsList, triangle1: showgoodsList}"></span>
         <div class="goodSwitch" v-if="showgoodsList">
           <T-list :data-prop="goodSwitchData" @changeData='reloadgoodsData'></T-list>
         </div>
       </div>
       <div class="tTime">
-        <span  @click="timeFunc">{{ timeChoise }}</span>
+        <span  @click="timeFunc">{{ timeChoise }}</span><span :class="{triangle: !showtimeList, triangle1: showtimeList}"></span>
         <div class="timeSwitch" v-if="showtimeList">
           <T-list :data-prop="timeSwitchData" @changeData='reloadtimeData'></T-list>
         </div>
       </div>
       <div class="tUnit">
-        <span  @click="unitFunc">{{ unitChoise }}</span>
+        <span  @click="unitFunc">{{ unitChoise }}</span><span :class="{triangle: !showunitList, triangle1: showunitList}"></span>
         <div class="unitSwitch" v-if="showunitList">
           <T-list :data-prop="unitSwitchData" @changeData='reloadunitData'></T-list>
         </div>
@@ -192,7 +283,10 @@
     </div>
     <ul class="listData">
       <li class="bor-B">
-        <div class="icon"> <span>1</span> </div>
+        <div class="icon">
+          <i class="img2"></i>
+          <!--<span>1</span>--> 
+        </div>
         <div class="content"> <span>百草味</span> 接下来我们来看一下钩子函数的参数 </div>
         <div class="price">￥500,210</div> 
       </li>
@@ -220,7 +314,7 @@
 <script>  
 import cTitle from '@/components/commonTitle'
 import tList from '@/components/timeList'
-import moment from 'moment'
+// import moment from 'moment'
 export default {
   name: '',
   data () {
@@ -238,8 +332,8 @@ export default {
       showunitList: false, //单位排行榜tab显隐
       unitChoise: '万元',
       timeSelectAction: false, //自定义时间显隐
-      startTime: String,
-      endTime: String
+      startTime: '',
+      endTime: ''
     }
   },
   components: {
@@ -250,6 +344,7 @@ export default {
   },
   methods: {
     goodsFunc () {
+      [this.showtimeList, this.showunitList] = [false, false]
       this.showgoodsList = !this.showgoodsList
     },
     reloadgoodsData (state) {
@@ -261,6 +356,7 @@ export default {
       this.goodSwitchData[state].action = true //重置时间参数     
     },
     timeFunc () {
+      [this.showgoodsList, this.showunitList] = [false, false]
       this.showtimeList = !this.showtimeList
     },
     reloadtimeData (state) {
@@ -277,6 +373,7 @@ export default {
          
     },
     unitFunc () {
+      [this.showtimeList, this.showgoodsList] = [false, false]
       this.showunitList = !this.showunitList
     },
     reloadunitData (state) {
@@ -288,7 +385,7 @@ export default {
       this.unitSwitchData[state].action = true //重置时间参数     
     },
     input1Time (state) {
-      this.startTime = state  
+      this.startTime = state
     },
     input2Time (state) {
       this.endTime = state
@@ -299,7 +396,12 @@ export default {
       }
     },
     timeSure () {
-      this.timeSelectAction = false
+      if (this.endTime == '' || this.startTime == ''){
+        return alert('开始或结束时间不能为空')
+      }else{
+        [this.timeSelectAction, this.showtimeList]=[false, false]        
+        this.timeChoise = `${this.startTime}-${this.endTime}`
+      }
     },
     closeSelect () {
       this.timeSelectAction = false

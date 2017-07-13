@@ -90,10 +90,36 @@
       position:relative;
       display:flex;
       .mTime{
-        flex:1;
+        width:100px;
         font-size:14px;
         color:#3687e3;
         text-align:center;
+        span{
+            display:inline-block;
+            vertical-align:middle;
+          &.triangle{
+            width: 0;
+            height: 0;
+            margin-left:2px;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 6px solid #3687e3;
+          }
+          &.triangle1{
+            width: 0;
+            height: 0;
+            margin-left:2px;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 6px solid #3687e3;
+          }
+        }
+        .timeSwitch{
+          background:#fff;
+          position:absolute;
+          top:40px;left:0;
+          z-index:10;
+        }
       }
       .mIn{
         flex:2;
@@ -168,6 +194,44 @@
         }
     }
   }
+  .choiseSelect{
+      width:100%;
+      height:100%;
+      position:relative;
+      position:fixed;
+      top:0;
+      left:0;
+      z-index:100;
+      background:rgba(0,0,0,.5);
+      .selectBox{
+        width:250px;
+        height:200px;
+        position:absolute;
+        top:50%;
+        left:50%;
+        margin:-100px 0 0 -125px;
+        background:#fff;
+        .close{
+          width:20px;
+          height:20px;
+          position:absolute;
+          top:0px;
+          right:2px;
+          font-size:22px;
+        }
+        p{
+          font-size:14px;  
+          margin:0 10px;
+          line-height:40px;  
+        }
+        button{
+          width:80px;
+          height:30px;
+          border:1px solid #999;
+          margin:0 0 0 85px;
+        }
+      }
+    }
 </style>
 
 <template>
@@ -195,7 +259,12 @@
         <T-switch :data-prop="switchData" @changeData='reloadData'></T-switch>
       </div>
       <div class="money bor-T">
-        <div class="mTime">本月</div>
+        <div class="mTime">
+          <span @click="timeFunc">{{ timeChoise }}</span><span :class="{triangle: !showtimeList, triangle1: showtimeList}"></span>
+          <div class="timeSwitch" v-if="showtimeList">
+            <T-list :data-prop="timeSwitchData" @changeData='reloadtimeData'></T-list>
+          </div>
+        </div>
         <div class="mIn">收入: <span>3000</span></div>
         <div class="mOut">支出: <span>1600</span></div>
       </div>
@@ -242,10 +311,20 @@
         </li>
       </ul>
     </div>
+    <div class="choiseSelect" v-if="timeSelectAction">
+      <div class="selectBox">
+        <p>选择时间</p>
+        <div class="close" @click="closeSelect">x</div>
+        <Date-picker type="date" :clearable="false" @on-change="input1Time" placeholder="开始时间" style="width: 200px;margin:10px auto;"></Date-picker>
+        <Date-picker type="date" :clearable="false" @on-change="input2Time" placeholder="结束时间" style="width: 200px;margin:20px auto;"></Date-picker>
+        <button @click="timeSure">确定</button>
+      </div>  
+    </div>
   </div>
 </template>
 
 <script>
+import tList from '@/components/timeList'
 import cTitle from '@/components/commonTitle'
 import tSwitch from '@/components/tableSwitch'
 export default {
@@ -255,7 +334,13 @@ export default {
       titleData: {
         title: '资金分析'
       },
+      showtimeList: false, //设置时间选择组件显隐
       switchData: Object, //设置switch所需要带的参数
+      timeChoise: '本月', //默认时间设置
+      timeSwitchData: Array,
+      timeSelectAction: false,
+      endTime: '',
+      startTime: ''
     }
   },
   created () {
@@ -272,11 +357,43 @@ export default {
       ],
       style: `background:#3687e3;color:#fff`
     }
+    this.timeSwitchData = [
+      {
+        name: '今日',
+        action: false,
+        type: 0
+      },{
+        name: '昨日',
+        action: false,
+        type: 1
+      },{
+        name: '本周',
+        action: false,
+        type: 2
+      },{
+        name: '上周',
+        action: false,
+        type: 3
+      },{
+        name: '本月',
+        action: true,
+        type: 4
+      },{
+        name: '上月',
+        action: false,
+        type: 5
+      },{
+        name: '自定义时间',
+        action: false,
+        type: 6
+      }
+    ]
     this.$Loading.finish()
   },
   components: {
     'C-title': cTitle,
-    'T-switch': tSwitch
+    'T-switch': tSwitch,
+    'T-list': tList
   },
   mounted () {
     this.highchartFunc()
@@ -286,6 +403,42 @@ export default {
   filters: {
   },
   methods: {
+    timeFunc () {
+      this.showtimeList = !this.showtimeList
+    },
+    reloadtimeData (state) {
+      if(state==6){
+        this.timeSelectAction = true
+      }else{
+        this.showtimeList = false
+        this.timeChoise = this.timeSwitchData[state].name
+        for(var item of this.timeSwitchData){
+          item.action = false
+        }
+        this.timeSwitchData[state].action = true //重置时间参数
+      }
+    },
+    input1Time (state) {
+      this.startTime = state  
+    },
+    input2Time (state) {
+      this.endTime = state
+      if(this.endTime < this.startTime){  
+        setTimeout(function(){
+          alert('结束时间必须大于开始时间')
+        }.bind(this),500)
+      }
+    },
+    timeSure () {
+      if (this.endTime == '' || this.startTime == ''){
+        return alert('开始或结束时间不能为空')
+      }else{
+        this.timeSelectAction = false
+      }
+    },
+    closeSelect () {
+      [this.timeSelectAction, this.showtimeList] = [false, false]
+    },
     reloadData () {
     },
     highchartFunc () {
