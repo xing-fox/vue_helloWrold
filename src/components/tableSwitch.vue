@@ -35,7 +35,7 @@ export default {
 
 <style scoped>
     #app,ul{
-        height:25px;
+        height:.5rem;
         box-sizing:border-box;
         display:flex;
     }
@@ -45,9 +45,9 @@ export default {
     }    
     ul li{
         flex:1;
-        width:30px;
+        width:.6rem;
         color:#707273;
         text-align:center;
-        line-height:25px;
+        line-height:.5rem;
     }
 </style>

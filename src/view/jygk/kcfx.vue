@@ -3,13 +3,16 @@
     .input{
       width:100%;
       height:44px;
+      margin-top:.88rem;
       background:#ddd;
       position:relative;
       input{
-          -webkit-disappearance:none;
+        -webkit-disappearance:none;
+        -o-disappearance:none;
         width:92%;
         height:30px;
         margin:7px 4%;
+        padding-left:5px;
         border:1px solid #bbb;
         border-radius:4px;
         background:#fff;
@@ -35,13 +38,13 @@
     .listData{
       ul li{
         width: 100%;
-        height:70px; 
+        height:80px; 
         position:relative; 
         .liLeft{
           float: left;  
           display: table;
-          width: 75%;
-          height:70px;
+          width: 70%;
+          height:80px;
           color:#888;
           padding:0 10px 0 15px;
           box-sizing:border-box;
@@ -56,7 +59,8 @@
         }
         .liRight{
           float: right;
-          width: 25%;
+          width: 30%;
+          overflow:hidden;
           margin:15px 0;
           div{
             line-height:20px;
@@ -64,11 +68,22 @@
               color:#666;
             }
             &:nth-child(2){
-              color:#999;;
+              color:#999;
+              width:100%;
+              height:20px;
+              overflow:hidden;
             }
           }
         }
       }
+    }
+    .notice{
+      width:100%;
+      background:#f1f1f1;
+      padding:.4rem 0;
+      text-align:center;
+      font-size:.32rem;
+      color:#666;
     }
   }
 </style>
@@ -77,36 +92,19 @@
   <div id="#app">
     <C-title :data-prop="titleData"></C-title>
     <div class="input bor-T bor-B" @click="InputFunc">
-      <input type="text" ref="Input">
+      <input ref="Input" v-model="searchJson">
       <div class="icon" v-show="searchIcon"> <img src="../../assets/search.png" alt=""><span>搜索</span> </div>
     </div>
+    <div v-if="noticeShow" class="notice">暂无数据...</div>
     <div class="listData">
       <ul>
-        <li class="bor-B">
+        <li class="bor-B" v-for="item in searchData">
           <div class="liLeft">
-            <p><span>垂直居中</span>通过display转化成为表格的形式，再采用垂直居中的方法得到需要的结果</p>
+            <p><span>{{ item.name }}</span>{{ item.spec }}</p>
           </div>
           <div class="liRight">
-            <div class="rightMoney">成本:￥50</div>
-            <div class="rightNum">数量:12件</div>
-          </div>
-        </li>
-        <li class="bor-B">
-          <div class="liLeft">
-            <p><span>垂直居中</span>通过display转化成为表格的形式，再采用垂直居中的方法得到需要的结果</p>
-          </div>
-          <div class="liRight">
-            <div class="rightMoney">成本:￥50</div>
-            <div class="rightNum">数量:12件</div>
-          </div>
-        </li>
-        <li class="bor-B">
-          <div class="liLeft">
-            <p><span>垂直居中</span>通过display转化成为表格的形式，再采用垂直居中的方法得到需要的结果</p>
-          </div>
-          <div class="liRight">
-            <div class="rightMoney">成本:￥50</div>
-            <div class="rightNum">数量:12件</div>
+            <div class="rightMoney">成本:￥{{ item.amount }}</div>
+            <div class="rightNum">数量:{{ item.num }}</div>
           </div>
         </li>
       </ul>
@@ -123,20 +121,59 @@ export default {
       titleData: {
         title: '库存成本'
       },
-      searchIcon: true
+      searchIcon: true, //小图标显示
+      searchJson: '', //关键字
+      searchData: [], //数据datalist
+      noticeShow: false, //notice没有数据
+      currentPage: 0, //当前翻页 
+      recPerPage: 10 //请求num
     }
   },
   components: {
     'C-title': cTitle
   },
+  watch: {
+    searchJson () {
+      this.searchData = []
+      this.currentPage = 0
+      this.init()
+    }
+  },
   methods: {
     InputFunc () {
       this.searchIcon = false
       this.$refs.Input.focus()
+    },
+    init () {
+      this.$http.post('/app/std_order/report/stdOrderSales_queryCost.action',
+        {
+          'condition.search': this.searchJson,
+          'page.currentPage': this.recPerPage
+        },
+        {emulateJSON: true}
+      ).then((response) => {
+        this.$store.dispatch('laodAsyncF')
+        this.searchData = (this.searchData).concat(response.body.data.pdList)
+        this.noticeShow = this.searchData.length ? false : true
+      }, (response) => {
+        return alert(response.body.message)
+      })
+    },
+    onScroll () {
+      if( (window.scrollY) + 10 > (document.body.scrollHeight) - (window.screen.height) ){
+        if( (this.currentPage+1) == parseInt(this.searchData.length/this.recPerPage) ){
+          this.currentPage++
+          this.init()
+          this.$store.dispatch('laodAsyncT')
+        }
+      }
     }
   },
-  created () { 
-    this.$Loading.finish();
+  created () {
+    this.init()
+    window.addEventListener('scroll',()=>{
+      this.onScroll()
+    })
   }
 }
 </script>

@@ -1,23 +1,21 @@
 'user strict';
 
 const state = {
-  shopCartNum: []  
+  show: true
 }
 
 const actions = {
-  laodAsyncf({ commit }) {
+  laodAsyncF({ commit }) {
     commit('loadChangef')
   },
-  laodAsynct({ commit }) {
+  laodAsyncT({ commit }) {
     commit('loadChanget')
   }
 }
 
 const mutations = {
-  Decrease: state => state.show = false,
-  Increase: state => {
-    
-  }
+  loadChangef: state => state.show = false,
+  loadChanget: state => state.show = true
 }
 
 const getters = {

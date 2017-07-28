@@ -4,6 +4,7 @@
     .tab{  
       height:50px;
       background:#eee;
+      margin-top:.88rem;
       line-height:50px;  
       display:flex;
       position:relative;
@@ -74,28 +75,44 @@
     .listData{
       background:#fff;  
       li{
-        padding:10px 0 10px 10px;
+        padding:5px 0 5px 10px;
         color:#999;  
         position:relative;
         p{
-          line-height:18px;
+          line-height:20px;
+          font-size:14px;
           span{
             margin-right:20px;  
           }
           &:first-child{
-            color:#333;  
-            font-size:14px;
+            color:#333;
+          }
+          &.name{
+            width:5rem;
+            overflow:hidden; 
+            display:-webkit-box; 
+            -webkit-line-clamp:1; 
+            text-overflow:ellipsis;
+            -webkit-box-orient:vertical;
+          }
+          &.addr{
+            width:7rem;
+            overflow:hidden; 
+            display:-webkit-box; 
+            -webkit-line-clamp:1; 
+            text-overflow:ellipsis;
+            -webkit-box-orient:vertical;
           }
         }
         .time{
+          font-size:14px;
           position:absolute;
-          top:10px;
+          top:5px;
           right:12px;
           color:#ff9000;
-          font-weight:bold;
         } 
       }
-    } 
+    }
     .choiseSelect{
       width:100%;
       height:100%;
@@ -157,32 +174,25 @@
           <T-list :data-prop="timeSwitchData" @changeData='reloadtimeData'></T-list>
         </div>
       </div>
-      <div class="tIntro">注:不现实从未下单客户</div>
+      <div class="tIntro">注:不显示从未下单客户</div>
     </div>
     <div class="lsList">
       <i class="icon"></i>
       <span class="text">流失客户数</span>
-      <span class="num">123</span>
+      <span class="num">{{ allDataNum }} 家</span>
     </div>
     <ul class="listData">
-      <li class="bor-T">
-        <p>好又多超市</p>
-        <p>南京市建邺区云龙路8号</p>
-        <p> <span>最后下单时间：2017-05-05</span> <span>下单金额：5000</span> </p>
-        <p>客户经理:张三</p>
-        <div class="time">10天未下单</div>
-      </li>
-      <li class="bor-T">
-        <p>好又多超市</p>
-        <p>南京市建邺区云龙路8号</p>
-        <p> <span>最后下单时间：2017-05-05</span> <span>下单金额：5000</span> </p>
-        <p>客户经理:张三</p>
-        <div class="time">10天未下单</div>
+      <li class="bor-T" v-for="item in allDataList">
+        <p class="name">{{ item.name }}</p>
+        <p class="addr">{{ item.addr || '...' }}</p>
+        <p> <span>最后下单日期:{{ item.time }}</span> <span>下单金额:{{ item.amount }}</span> </p>
+        <p>客户经理:{{ item.manager_name }}</p>
+        <div class="time">{{ item.days }}天未下单</div>
       </li>
     </ul>
     <div class="choiseSelect" v-if="timeSelectAction">
       <div class="selectBox">
-        <p>自定义时间</p>
+        <p>自定义天数</p>
         <div class="close" @click="closeSelect">x</div>
         <input class="choiseTime" ref="inputTime" type="number" placeholder="请输入时间">
         <button @click="timeSure">确定</button>
@@ -204,7 +214,14 @@ export default {
       showtimeList: false,
       timeChoise: '7天',
       timeSwitchData: Array,
-      timeSelectAction: false
+      timeSelectAction: false,
+      condiCode: 1,
+      condiDay: 1,
+      pageCurrentPage: 0,
+      pageRecPerPage: 10,
+      allData: Object,
+      allDataList: [],
+      allDataNum: 0
     }
   },
   components: {
@@ -212,67 +229,107 @@ export default {
     'T-list': tList
   },
   methods: {
+    init () {
+      this.$http.post('/app/std_order/report/stdOrderSales_queryLossCustomers.action',
+        {
+          'condition.code': this.condiCode,
+          'condition.day': this.condiDay,
+          'page.currentPage': this.pageCurrentPage,
+          'page.recPerPage': this.pageRecPerPage 
+        },
+        {emulateJSON: true}
+      ).then((response) => {
+        this.$store.dispatch('laodAsyncF')
+        this.allDataList = (this.allDataList).concat(response.body.data.cmList)
+        this.allData = response.body.data
+        this.allDataNum = response.body.data.num
+      }, (response) => {
+        return alert(response.body.message)
+      })
+    },
     timeFunc () {
       this.showtimeList = !this.showtimeList
     },
     reloadtimeData (state) {
-      if(state == 6){ //自定义时间
+      if(state == 6){
         this.timeSelectAction = true
       }else{
-        this.showtimeList = false
+        [this.timeSelectAction, this.showtimeList] = [false, false]
+        this.condiCode = state+1
         this.timeChoise = this.timeSwitchData[state].name
-        for(var item of this.timeSwitchData){
-            item.action = false
-        }
-        this.timeSwitchData[state].action = true //重置时间参数  
+        this.reStart(state) 
       }
-         
     },
     timeSure () {
       if((/^\+?[1-9][0-9]*$/).test(this.$refs.inputTime.value)){
         [this.timeSelectAction, this.showtimeList] = [false, false]
         this.timeChoise = this.$refs.inputTime.value + '天'
+        this.condiDay = this.$refs.inputTime.value
+        this.condiCode = -1
+        this.reStart(6)
       }else{
-        alert('您输入的格式不正确~')
+        return alert('您输入的格式不正确~')
       }
     },
     closeSelect () {
       [this.timeSelectAction, this.showtimeList] = [false, false]
-    }
+    },
+    reStart (state) {
+      this.allDataList = []
+      this.pageCurrentPage = 0
+      for(var item of this.timeSwitchData){
+          item.action = false
+      }
+      this.timeSwitchData[state].action = true
+      this.$store.dispatch('laodAsyncT')
+      this.init()
+    },
+    onScroll () {
+      if( (window.scrollY) + 10 > (document.body.scrollHeight) - (window.screen.height) ){
+        if( (this.pageCurrentPage+1) == parseInt(this.allDataList.length/this.pageRecPerPage) ){
+          this.pageCurrentPage++
+          this.$store.dispatch('laodAsyncT')
+          this.init()
+        }
+      }
+    }  
   },
   created () {
     this.timeSwitchData = [
       {
         name: '7天',
         action: true,
-        type: 0
+        type: 1
       },{
         name: '10天',
         action: false,
-        type: 1
+        type: 2
       },{
         name: '15天',
         action: false,
-        type: 2
+        type: 3
       },{
         name: '30天',
         action: false,
-        type: 3
+        type: 4
       },{
         name: '60天',
         action: false,
-        type: 4
+        type: 5
       },{
         name: '90天',
         action: false,
-        type: 5
+        type: 6
       },{
         name: '自定义时间',
         action: false,
-        type: 6
+        type: -1
       }
     ]
-    this.$Loading.finish()
+    window.addEventListener('scroll',()=>{
+      this.onScroll()
+    })
+    this.init()
   }
 }
 </script>

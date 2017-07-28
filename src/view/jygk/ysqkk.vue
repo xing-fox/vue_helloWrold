@@ -1,64 +1,65 @@
 <style lang="less" scoped>
-  #app{
+#app{
     .top{
-      display:flex;
-      height:100px;
-      margin-top:.88rem;
-      text-align:center;
-      background:#fff9ed;
-      position:relative;
-      .tLeft{
-        flex:1;
-        margin:20px 0;
-        p{
-          font-size:14px;
-          line-height:30px;
-          &:nth-child(1){
-            color:#666;
-          }
-          &:nth-child(2){
-            color:#333;
-            font-weight:bold;
-          }
+        display:flex;
+        height:100px;
+        margin-top:.88rem;
+        text-align:center;
+        background:#fff9ed;
+        position:relative;
+        .tLeft{
+            flex:1;
+            margin:20px 0;
+            p{
+                font-size:14px;
+                line-height:30px;
+                &:nth-child(1){
+                color:#666;
+                }
+                &:nth-child(2){
+                color:#333;
+                font-weight:bold;
+                }
+            }
         }
-      }
-      .tRight{
-        flex:1;
-        margin:20px 0;
-        p{
-          font-size:14px;
-          line-height:30px;
-          &:nth-child(1){
-            color:#666;
-          }
-          &:nth-child(2){
-            color:#333;
-            font-weight:bold;
-          }
+        .tRight{
+            flex:1;
+            margin:20px 0;
+            p{
+                font-size:14px;
+                line-height:30px;
+                &:nth-child(1){
+                    color:#666;
+                }
+                &:nth-child(2){
+                    color:#333;
+                    font-weight:bold;
+                }
+            }
         }
-      }
     }
     .listData li{
-      padding:0 25px 0 10px;
-      height:40px;
-      line-height:40px;
-      position:relative;
-      a{
-        width:100%;
+        padding:0 15px 0 10px;
+        height:40px;
+        line-height:40px;
         display:flex;
         position:relative;
-      }
-      span{
+        span{
         color:#666;
         &:nth-child(1){
-          flex:1;     
+            flex:1;     
+            overflow:hidden; 
+            display:-webkit-box; 
+            -webkit-line-clamp:1; 
+            text-overflow:ellipsis;
+            -webkit-box-orient:vertical;
         }
         &:nth-child(2){
-          width:120px;
-          display:inline-block;
-          text-align:right;
-          position:relative;
-          i{
+            width:120px;
+            display:inline-block;
+            text-align:right;
+            position:relative;
+            i{
             position:absolute;
             top:10px;right:-18px;
             display:inline-block;
@@ -68,11 +69,11 @@
             background-image:url('../../assets/arrow_right.png');
             background-size:100% 100%;
             background-repeat:no-repeat;
-          }
+            }
         }
-      }
+        }
     }
-  }
+}
 </style>
 
 <template>
@@ -80,20 +81,18 @@
     <C-title :data-prop="titleData"></C-title>
     <div class="top bor-T">
         <div class="tLeft">
-            <p>欠款客户数</p>
+            <p>客户数</p>
             <p>{{ dataJson.num }}</p>
         </div>
         <div class="tRight">
-            <p>欠款金额</p>
+            <p>预收金额</p>
             <p>￥{{ dataJson.totalAmount }}</p>
         </div>
     </div>
     <ul class="listData">
-      <li class="bor-T" v-for="item in dataJsonList">
-        <router-link :to="{ path: '/jygk/qkdj', query: { Id: item.id, backflag: 1 } }">
-          <span :data-id="item.id">{{ item.name }}</span>
-          <span>￥{{ item.amount }} <i></i> </span>
-        </router-link>
+      <li class="bor-T" v-for="item in dataJsonList"> 
+        <span :data-id="item.id">{{ item.name }}</span>
+        <span>￥{{ item.amount }}</span> 
       </li>
     </ul>
   </div>
@@ -106,7 +105,7 @@ export default {
   data () {
     return {
       titleData: {
-        title: '应收欠款'
+        title: '预收客户款'
       },
       dataJson: Object,
       currentPages: 0,
@@ -119,7 +118,7 @@ export default {
   },
   methods:{
     init () {
-      this.$http.post('/app/std_order/report/stdOrderSales_queryShouldReceive.action',
+      this.$http.post('/app/std_order/report/stdOrderSales_queryHasReceive.action',
         {
           'page.currentPage': this.currentPages,
           'page.recPerPage': this.recPerPage
@@ -144,12 +143,10 @@ export default {
     }
   },
   created () {
-    document.addEventListener('scroll',this.onScroll,false)
+    window.addEventListener('scroll',()=>{
+      this.onScroll()
+    })
     this.init()
-  },
-  beforeRouteLeave (to, from, next) {
-    document.removeEventListener('scroll',this.onScroll,false)
-    next()
   }
 }
 </script>

@@ -1,47 +1,55 @@
+<style scoped>
+</style>
+
 <template>
-  <div id="index">
+  <div id="app">
   <C-title :data-prop="titleData"></C-title>
-    <h3>{{ msg }}</h3> 
   </div>
 </template>
 
 <script>  
-import $ from 'jquery'
 import cTitle from '@/components/commonTitle'
-// import { mapActions  } from 'vuex'
-
 export default {
-  name: 'index',
+  name: 'Index',
   data () {
     return {
-      msg: 'Hello Wrold~',
       titleData: {
-        title: '首页'
+        title: '报表'
       }
     }
   },
   components: {
     'C-title': cTitle
   },
-  mounted () {
-        
-  },
-  computed: {
-    
-  },
-  methods: {
-     
-  },
-  created () { 
-    this.$Loading.finish(); //数据请求完毕，进度加载完成
+  created () {
+    let flag = this.$route.query.urlFlag
+    if(flag == 1){
+      this.$router.push('/jygk/zjfx');
+    }
+    if(flag ==2){
+      this.$router.push('/jygk/kcfx');  
+    }
+    if(flag ==3){
+      this.$router.push('/jygk/ysqk');    
+    }
+    if(flag ==4){
+      this.$router.push('/jygk/yfgysk');    
+    }
+    if(flag ==5){
+      this.$router.push('/jygk/ysqk');   
+    }
+    if(flag ==6){
+      this.$router.push('/jygk/dhhy'); 
+    }
+    if(flag ==7){
+      this.$router.push('/jygk/cgfx');    
+    }
+    if(flag ==8){
+      this.$router.push('/jygk/xsmlfx');   
+    }
+    if(flag ==9){
+      this.$router.push('/jygk/khlsfx'); 
+    }
   }
 }
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  text-align: center;
-  font-weight: normal;
-} 
-</style>

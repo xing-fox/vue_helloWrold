@@ -26,7 +26,7 @@ li{
             top:20px;left:0;   
             border-left:5px solid transparent;   
             border-right:5px solid transparent;   
-            border-top:6px solid #999;  
+            border-top:6px solid #999;
         }
     }
     .list1{
@@ -45,13 +45,47 @@ li{
     .list2{
         width:34px;
         height:34px;
+        color:#2d8cf0;
+        font-size:12px;
         line-height:34px;
         text-align:center;
-        font-size:12px;
         position:absolute;
+        border-radius:17px;
         top:8px;right:110px;
         border:1px solid #ddd;
-        border-radius:17px;
+        box-sizing:border-box;
+        .clipLeft{
+            width:34px;
+            height:34px;
+            position:absolute;
+            clip:rect(0px 17px 34px 0px);
+            top:-1px;left:-1px;
+            div{
+                width:100%;
+                height:100%;
+                position:absolute;
+                top:0;left:0;
+                clip:rect(0px 17px 34px 0px);
+                border:1px solid #2d8cf0;
+                border-radius:17px;
+            }
+        }
+        .clipRight{
+            width:34px;
+            height:34px;
+            position:absolute;
+            clip:rect(0px 34px 34px 17px);
+            top:-1px;right:-1px;
+            div{
+                width:100%;
+                height:100%;
+                position:absolute;
+                top:0;left:0;
+                clip:rect(0px 34px 34px 17px);
+                border:1px solid #2d8cf0;
+                border-radius:17px;
+            }
+        }
     }
     .list3{
         position:absolute;
@@ -82,6 +116,11 @@ li{
         top:8px;left:0;
         border-radius:17px;
         background:#ddd;
+        img{
+            width:100%;
+            height:100%;
+            border-radius:17px;
+        }
     }
     .list5{
         margin-left:60px;
@@ -115,7 +154,8 @@ li{
             <!--有下级部门的情况-->
             <li class="bor-T li_emps" v-if="item.type == 1">
                 <div class="list4">
-                    <span>{{ item.empname | filter1 }}</span>
+                    <img v-if="item.face !=''" :src="item.face" alt="">
+                    <span v-else>{{ item.empname | filter1 }}</span>
                 </div>
                 <div class="list5">
                     <span>{{ item.empname }}</span>
@@ -126,19 +166,28 @@ li{
                 </div>
             </li>  
             <li class="bor-T" v-else>
-                <div v-if="item.depts || item.emps" @click="toggle(item.id)">
+                <div v-if="item.depts || item.emps" @click.stop="toggle(item.id)">
                     <div class="list1" :class="{list1_title: false}">
-                        <i :class="{i_show: false, icon2: !icon_flag, icon1: icon_flag}"></i>
+                        <i :class="{i_show: false, icon2: itemOpen == item.id, icon1: itemOpen != item.id}"></i>
                         <span>{{item.dept_name}}</span>
                     </div>
                     <div class="list2">
                         <span>{{item.submitRate}}%</span>
+                        <div :class="{clipLeft: item.submitRate*3.6>180}">
+                            <div :style="{ transform: 'rotate(' + item.submitRate*3.6 + 'deg)' }"></div>
+                        </div>
+                        <div v-if="item.submitRate*3.6<180 || item.submitRate*3.6 ==180" class="clipRight">
+                            <div :style="{ transform: 'rotate(' + -(50-item.submitRate)*3.6 + 'deg)' }"></div>
+                        </div>
+                        <div v-else class="clipRight">
+                            <div style="transform: rotate(0deg)"></div>
+                        </div>
                     </div>
                     <div class="list3" :class="{span_right : true}">
                         <span>{{item.notSubmitNum}}人未交</span>
                         <img :class="{img_show: true}" src="../assets/arrow_right.png" alt="">
                     </div>
-                    <div v-if="item.emps" v-show="itemOpen == item.id ">
+                    <div v-if="item.emps" v-show="itemOpen == item.id">
                         <rbChildList :data-prop='item.emps'></rbChildList>
                     </div>
                     <div v-if="item.depts" v-show="itemOpen == item.id">
@@ -146,35 +195,49 @@ li{
                     </div>
                 </div>
                 <div v-else>
-                    <div class="list1" :class="{list1_title: true}">
-                        <span>{{item.dept_name | filtergeshi}}</span>
-                    </div>
-                    <div class="list2">
-                        <span>{{item.submitRate}}%</span>
-                    </div>
-                    <div class="list3" :class="{span_right : false}">
-                        <span>{{item.notSubmitNum}}人未交</span>
-                        <img :class="{img_show: false}" src="../assets/arrow_right.png" alt="">
-                    </div>
+                    <router-link :to="{ path: '/rbfx/contdetail', query: { id: item.id, deptName: item.dept_name }}">
+                        <div class="list1" :class="{list1_title: true}">
+                            <span>{{item.dept_name | filtergeshi}}</span>
+                        </div>
+                        <div class="list2">
+                            <span>{{item.submitRate}}%</span>
+                            <div :class="{clipLeft: item.submitRate*3.6>180}">
+                                <div :style="{ transform: 'rotate(' + item.submitRate*3.6 + 'deg)' }"></div>
+                            </div>
+                            <div v-if="item.submitRate*3.6<180 || item.submitRate*3.6 ==180" class="clipRight">
+                                <div :style="{ transform: 'rotate(' + -(50-item.submitRate)*3.6 + 'deg)' }"></div>
+                            </div>
+                            <div v-else class="clipRight">
+                                <div style="transform: rotate(0deg)"></div>
+                            </div>
+                        </div>
+                        <div class="list3" :class="{span_right : false}">
+                            <span>{{item.notSubmitNum}}人未交</span>
+                            <img :class="{img_show: false}" src="../assets/arrow_right.png" alt="">
+                        </div>
+                    </router-link>
                 </div>
             </li>
         </ul>
     </div>
 </template>
 <script>
+import { mapState , mapActions } from 'vuex'
 export default {
   name: 'rbChildList',
   data () {
     return {
-      icon_flag: true,
       itemOpen: Number,
-      deptsOpen: false,
       localData: Object
     }
   },
   props: ['dataProp'],
   created () {
+    //console.log(this.countLocalData)  
   },
+  //computed: mapState({
+  //  countLocalData: state => state.Rbfx.rbfxRemeber
+  //}),
   filters: {
     filtergeshi (value) {
       return value.replace(/(^\s*)/g,"")
@@ -185,12 +248,18 @@ export default {
   },
   methods: {
     toggle (val) {
-      this.itemOpen = value
+      if(this.localData[val]){
+        this.localData[val] = false
+        this.itemOpen = ''
+      }else{
+        this.localData[val] = true
+        this.itemOpen = val
+      }
+      //this.LocaldataAction(this.localData)
     }
-  },
-  watch: {
-    dataProp(curVal,oldVal){
-    } 
+    //...mapActions([
+    //  'LocaldataAction'
+    //])
   }
 }
 </script>

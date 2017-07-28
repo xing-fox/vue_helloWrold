@@ -90,7 +90,7 @@
     </div>
     <ul class="listData">
       <li class="bor-T" v-for="item in dataJsonList">
-        <router-link :to="{ path: '/jygk/qkdj', query: { Id: item.id, backflag: 1 } }">
+        <router-link :to="{ path: '/jygk/qkdjk', query: { Id: item.id, backflag: 1 } }">
           <span :data-id="item.id">{{ item.name }}</span>
           <span>￥{{ item.amount }} <i></i> </span>
         </router-link>
@@ -106,11 +106,11 @@ export default {
   data () {
     return {
       titleData: {
-        title: '应收欠款'
+        title: '应付供应商款'
       },
       dataJson: Object,
-      currentPages: 0,
       dataJsonList: [],
+      currentPages: 0,
       recPerPage: 15 //请求num
     }
   },
@@ -119,7 +119,7 @@ export default {
   },
   methods:{
     init () {
-      this.$http.post('/app/std_order/report/stdOrderSales_queryShouldReceive.action',
+      this.$http.post('/app/std_order/report/stdOrderSales_queryShouldPayment.action',
         {
           'page.currentPage': this.currentPages,
           'page.recPerPage': this.recPerPage
@@ -135,8 +135,8 @@ export default {
     },
     onScroll () {
       if( (window.scrollY) + 10 > (document.body.scrollHeight) - (window.screen.height) ){
-        if( (this.currentPages+1) == parseInt(this.dataJsonList.length/this.recPerPage) ){
-          this.currentPages++
+        if( (this.currentPage+1) == parseIn(this.dataJsonList.length/this.recPerPage) ){
+          this.currentPage++
           this.$store.dispatch('laodAsyncT')
           this.init()
         }
@@ -147,7 +147,7 @@ export default {
     document.addEventListener('scroll',this.onScroll,false)
     this.init()
   },
-  beforeRouteLeave (to, from, next) {
+  beforeRouteLeave: (to, from, next) => {
     document.removeEventListener('scroll',this.onScroll,false)
     next()
   }

@@ -1,17 +1,20 @@
 <style scoped>
   #cTitle{
-    height:44px;
-    line-height:44px;
-    background:#F2F2F2;
+    height:.88rem;
+    width:100%;
+    line-height:.88rem;
     text-align:center;
-    font-size:18px;
+    font-size:.38rem;
+    background:#fff;
     color:#1a1a1a;
-    position:relative;
+    position:fixed;
+    top:0;left:0;
+    z-index:10000;
   }
   .icon_left{
     display:inline-block;
-    width:44px;
-    height:44px;
+    width:.88rem;
+    height:.88rem;
     position:absolute;
     top:0;left:0;
     z-index:1;
@@ -32,6 +35,11 @@
 <script>
 export default {
   name: 'content',
+  data () {
+    return {
+      backFlag: this.$route.query.backflag
+    }
+  },
   props: {
     'dataProp': {
       type: Object
@@ -39,7 +47,11 @@ export default {
   },
   methods: {
     backReturn () {
-      window.location.go(-1)
+      if(this.backFlag == 1 ){
+        window.history.go(-1)
+      }else{
+        wq.wqload.wqClosePage()
+      }
     }
   }
 }

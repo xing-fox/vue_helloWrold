@@ -1,11 +1,11 @@
 <style lang="less" scoped>
   ul{
     li{
-      width:100px;
-      height:40px;
-      line-height:40px;
+      width:2rem;
+      height:.8rem;
+      line-height:.8rem;
       text-align:center;
-      font-size:14px;
+      font-size:.28rem;
       color:#333;
       position:relative;
         &.active{
@@ -38,4 +38,3 @@ export default {
   }
 }
 </script>
-

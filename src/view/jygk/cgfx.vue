@@ -110,7 +110,10 @@
       height:1.6rem;  
       display:flex;
       border-top:1px solid #ccc;
-      .list1,.list2,.list3{
+      .list2{
+          flex:1.5 !important;
+      }
+      .list1,.list2{
         flex:1;
         padding:.4rem 0;
         text-align: center;
@@ -200,7 +203,7 @@
           width:2rem;
           text-align:center;
         }
-        .rate{
+        .num{
           width:2rem;
           text-align:center;
         }
@@ -292,16 +295,12 @@
     </div>
     <div class="tabList">
       <div class="list1" :class="{active: tabFlag == 1}" @click="tabFlagFunc(1)">
-        <p>销售净额</p>
-        <p>￥{{ allData.totalAmount }}</p>
+        <p>采购数量</p>
+        <p>{{ allData.totalNum }}</p>
       </div>
       <div class="list2" :class="{active: tabFlag == 2}" @click="tabFlagFunc(2)">
-        <p>销售毛利</p>
-        <p>￥{{ allData.totalProfit }}</p>
-      </div>
-      <div class="list3" :class="{active: tabFlag == 3}" @click="tabFlagFunc(3)">
-        <p>毛利率</p>
-        <p>{{ allData.totalRate }}</p>
+        <p>采购金额</p>
+        <p>￥{{ allData.totalAmount }}</p>
       </div>
     </div>
     <div class="noticetitle" v-if="noticeShow">暂无数据...</div>
@@ -310,11 +309,11 @@
         <div class="icon" v-if="index<3">
           <i :class="'img'+(index+1)"></i> 
         </div>
-        <div class="icon" v-else v-show="index<10"><span>{{index+1}}</span> </div>
-        <div class="content" v-if="contFlag" :class="{'content1': index > 9}"><span>{{item.name}}</span>{{item.ext}}</div>
-        <div class="content" v-else :class="{'content1': index > 9}"><p>{{item.name}}</p><p>{{item.ext}}</p></div>
-        <div class="price" v-if="dataTypeShow">￥{{item.amount}}</div> 
-        <div class="rate" v-else>{{item.rate}}</div>
+        <div class="icon" v-else> <span>{{index+1}}</span> </div>
+        <div class="content" v-if="contFlag" v-show="index<10"> <span>{{item.name}}</span>{{item.ext}}</div>
+        <div class="content" v-else :class="{'content1': index >9 }"><p>{{item.name}}</p><p>{{item.ext}}</p></div>
+        <div class="price" v-if="!dataTypeShow">￥{{item.amount}}</div>
+        <div class="num" v-else>{{item.num}}</div>
       </li>
     </ul>
     <div class="sort" @click="sortFunc">
@@ -337,11 +336,11 @@ import cTitle from '@/components/commonTitle'
 import tList from '@/components/timeList'
 import moment from 'moment'
 export default {
-  name: 'jygkXsmlfx',
+  name: 'Jygkcgfx',
   data () {
     return {
       titleData: {
-        title: '销售毛利分析'
+        title: '采购分析'
       },
       goodSwitchData: [], //商品排行榜选项
       showgoodsList: false, //商品排行榜tab显隐
@@ -353,12 +352,12 @@ export default {
       showunitList: false, //单位排行榜tab显隐
       unitChoise: '万元',
       contFlag: true,
-      noticeShow: false,
       dataTypeShow: true,
       timeSelectAction: false, //自定义时间显隐
       startTime: '',
       endTime: '',
       tabFlag: 1,
+      noticeShow: false,
       allData: Object, //总的数据
       allDataBalanceList: [],
       dataContent: 1, //统计内容
@@ -376,7 +375,7 @@ export default {
   },
   methods: {
     init () {
-      this.$http.post('/app/std_order/report/stdOrderSales_querySaleProfit.action',
+      this.$http.post('/app/std_order/report/stdOrderSales_queryPurchase.action',
         {
           'condition.content': this.dataContent,
           'condition.flag': this.dataFlag,
@@ -404,8 +403,8 @@ export default {
     },
     reloadgoodsData (state) {
       this.dataCurrentpage = 0
-      this.dataType = state + 1
       this.contFlag = state == 0 ? true : false
+      this.dataType = state + 1
       this.showgoodsList = false
       this.goodsChoise = this.goodSwitchData[state].name
       for(var item of this.goodSwitchData){
@@ -489,15 +488,14 @@ export default {
       }else{
         [this.timeSelectAction, this.showtimeList] = [false, false]
         this.timeChoise = _startDataArrya.join('').substr(4) +'-'+ _endDataArray.join('').substr(4)
+        this.dataCurrentpage = 0
         this.dataDatacode = -1
         for(var item of this.timeSwitchData){
             item.action = false
         }
-        this.dataCurrentpage = 0
+        this.timeSwitchData[6].action = true
         this.allData = []
         this.allDataBalanceList = []
-        this.timeSwitchData[6].action = true
-        this.$store.dispatch('laodAsyncT')        
         this.init()
       }
 
@@ -508,8 +506,8 @@ export default {
     tabFlagFunc (state) {
       this.dataCurrentpage = 0
       this.tabFlag = state
+      this.dataTypeShow = state == 1 ? true : false
       this.dataContent = state
-      this.dataTypeShow = state == 3 ? false : true
       this.allData = []
       this.allDataBalanceList = []
       this.init()
@@ -525,7 +523,6 @@ export default {
       if( (window.scrollY) + 10 > (document.body.scrollHeight) - (window.screen.height) ){
         if( (this.dataCurrentpage+1) == parseInt(this.allDataBalanceList.length/this.dataRecprepage) ){
           this.dataCurrentpage++
-          this.$store.dispatch('laodAsyncT')
           this.init()
         }
       }

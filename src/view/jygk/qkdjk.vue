@@ -25,7 +25,7 @@
         }
       }
       .cMid{
-        flex:2;
+        flex:1.5;
           ul li{
             width:1.2rem;
             height:.6rem;
@@ -52,7 +52,7 @@
           display:table-cell;
           vertical-align:middle;
           li{
-            margin-left:.5rem;
+            margin-left:.2rem;
             text-align:left;
             &:last-child{
               color:#ff9000;
@@ -77,22 +77,14 @@
           </div>
           <div class="cMid"> 
             <ul>
-              <li :class=" item.type | filterClass ">{{ item.type | filterName }}</li>
+              <li :class="'color'+item.type">{{ item.type | filterName }}</li>
             </ul> 
           </div>
-          <div class="cRight" v-if="item.type == 3"> 
+          <div class="cRight"> 
             <ul>
               <li>{{ typeName[item.type-1][0] }}:￥{{item.amount1}}</li>
               <li>{{ typeName[item.type-1][1] }}:￥{{item.amount2}}</li>
               <li>{{ typeName[item.type-1][2] }}:￥{{item.amount3}}</li>
-              <li>{{ typeName[item.type-1][3] }}:￥{{item.amount4}}</li>
-            </ul> 
-          </div>
-          <div class="cRight" v-else> 
-            <ul>
-              <li>{{ typeName[item.type-1][0] }}:￥{{item.amount1}}</li>
-              <li>{{ typeName[item.type-1][1] }}:￥{{item.amount2}}</li>
-              <li>{{ typeName[item.type-1][2] }}:￥{{item.amount4}}</li>
             </ul>
           </div>    
         </li>
@@ -115,11 +107,9 @@ export default {
       recPerPage: 10,
       allData: [], //获取的所有数据,
       typeName: [
-        ['应收','已收','欠款'],
-        ['订货','已收','欠款'],
-        ['销售','退货','已收','欠款'],
-        ['退货','已退','待退'],
-        ['销售','已收','欠款']
+        ['应付','已付','待付'],
+        ['进货','已付','待付'],
+        ['退货','已退','待退']
       ],
       noticeShow: false
     }
@@ -138,13 +128,13 @@ export default {
        }
     },
     filterName (value) {
-      let name = ['期初','订货会','车销','退货','发货']
+      let name = ['期初应付','采购','采购退货']
       return name[value-1]
     }
   },
   methods: {
     init () {
-      this.$http.post('/app/std_order/report/stdOrderSales_queryShouldReceiveById.action',
+      this.$http.post('/app/std_order/report/stdOrderSales_queryShouldPaymentById.action',
         {
           'condition.cmId': this.cmId, 
           'page.currentPage': this.currentPages,
@@ -153,7 +143,7 @@ export default {
         {emulateJSON: true}
       ).then((response) => {
         this.$store.dispatch('laodAsyncF')
-        this.allData = response.body.data.cmList
+        this.allData = this.allData.concat(response.body.data.cmList)
         this.noticeShow = this.allData.length ? false : true
       }, (response) => {
         return alert(response.body.message)
@@ -167,7 +157,7 @@ export default {
           this.init()
         }
       }
-    }
+    } 
   },
   created () {
     window.addEventListener('scroll',()=>{

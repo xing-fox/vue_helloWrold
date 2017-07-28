@@ -5,14 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1,user-scalable=no"/>
     <meta content="yes" name="apple-mobile-web-app-capable">
     <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <script>
+      (function (maxWidth, originSize) {
+          var width = document.documentElement.clientWidth
+          var Standard = originSize / (maxWidth * 1.0 / width)
+          Standard = Standard > 100 ? 100 : Standard
+          document.querySelector("html").style.fontSize = Standard + "px"
+      })(750, 100)
+    </script>
     <title>报表</title>
   </head>
   <body>
     <div id="app"></div>
     <!-- built files will be auto injected -->
-    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <!--<script src="http://code.highcharts.com/highcharts.js"></script>
     <script src="http://code.highcharts.com/highcharts-more.js"></script>    
-    <script src="http://code.highcharts.com/modules/solid-gauge.js"></script>
+    <script src="http://code.highcharts.com/modules/solid-gauge.js"></script>-->
   </body>
 </html>
  
